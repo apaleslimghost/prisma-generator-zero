@@ -1,3 +1,9 @@
 # prisma-generator-zero
 
-> This generator was bootstraped using [create-prisma-generator](https://github.com/YassinEldeeb/create-prisma-generator)
+to do:
+
+- [ ] generate database schema
+  - [ ] how to handle version?
+- [ ] referencing enum from model
+- [ ] relationships
+- [ ] compound primary keys
