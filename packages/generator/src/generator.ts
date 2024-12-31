@@ -17,19 +17,17 @@ generatorHandler({
     }
   },
   onGenerate: async (options: GeneratorOptions) => {
-    options.dmmf.datamodel.enums.forEach(async (enumInfo) => {
-      const tsEnum = generateZeroSchema(enumInfo)
+    const typescript = generateZeroSchema(options.dmmf.datamodel)
 
-      if(!options.generator.output) {
-        throw new Error('expected output in generator options')
-      }
+    // if(!options.generator.output) {
+    //   throw new Error('expected output in generator options')
+    // }
 
-      const writeLocation = path.join(
-        options.generator.output.value,
-        `${enumInfo.name}.ts`,
-      )
+    // const writeLocation = path.join(
+    //   options.generator.output.value,
+    //   `${enumInfo.name}.ts`,
+    // )
 
-      await writeFileWithDirectory(writeLocation, tsEnum)
-    })
+    // await writeFileWithDirectory(writeLocation, tsEnum)
   },
 })
