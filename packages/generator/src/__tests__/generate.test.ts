@@ -57,7 +57,8 @@ test('model generation', async () => {
                 title: "string",
                 slug: { type: "string", optional: true },
                 contents: "json"
-            }
+            },
+            primaryKey: "id"
         })
     }"
   `)

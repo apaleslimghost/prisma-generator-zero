@@ -44,43 +44,55 @@ const prismaTypeToZeroType = (type: string) => {
   }
 }
 
-const generateModelDefinition = (model: DMMF.Model) => factory.createPropertyAssignment(
-  model.name,
-  factory.createCallExpression(
-    factory.createIdentifier("createTableSchema"),
-    undefined,
-    [
-      factory.createObjectLiteralExpression([
-        factory.createPropertyAssignment(
-          'tableName',
-          factory.createStringLiteral(
-            model.dbName ?? model.name
-          )
-        ),
-        factory.createPropertyAssignment(
-          'columns',
-          factory.createObjectLiteralExpression(
-            model.fields.map(
-              field => factory.createPropertyAssignment(
-                field.dbNames ? field.dbNames[0] : field.name,
-                field.isRequired ?
-                  factory.createStringLiteral(
-                    prismaTypeToZeroType(field.type)
-                  ) :
-                  factory.createObjectLiteralExpression([
-                    factory.createPropertyAssignment('type', factory.createStringLiteral(
-                      prismaTypeToZeroType(field.type)
-                    )),
-                    factory.createPropertyAssignment('optional', factory.createTrue()),
-                  ])
-              )
+const generateModelDefinition = (model: DMMF.Model) => {
+  const idField = model.fields.find(
+              field => field.isId
             )
-          , true)
-        )
-      ], true)
-    ]
+
+  return factory.createPropertyAssignment(
+    model.name,
+    factory.createCallExpression(
+      factory.createIdentifier("createTableSchema"),
+      undefined,
+      [
+        factory.createObjectLiteralExpression([
+          factory.createPropertyAssignment(
+            'tableName',
+            factory.createStringLiteral(
+              model.dbName ?? model.name
+            )
+          ),
+          factory.createPropertyAssignment(
+            'columns',
+            factory.createObjectLiteralExpression(
+              model.fields.map(
+                field => factory.createPropertyAssignment(
+                  field.dbNames ? field.dbNames[0] : field.name,
+                  field.isRequired ?
+                    factory.createStringLiteral(
+                      prismaTypeToZeroType(field.type)
+                    ) :
+                    factory.createObjectLiteralExpression([
+                      factory.createPropertyAssignment('type', factory.createStringLiteral(
+                        prismaTypeToZeroType(field.type)
+                      )),
+                      factory.createPropertyAssignment('optional', factory.createTrue()),
+                    ])
+                )
+              )
+            , true),
+          ),
+          ...(idField ? [
+            factory.createPropertyAssignment(
+              'primaryKey',
+              factory.createStringLiteral(idField.dbNames ? idField.dbNames[0] : idField.name)
+            )
+          ] : [])
+        ], true)
+      ]
+    )
   )
-)
+}
 
 export const generateModelMap = (models: DMMF.Model[]) => factory.createVariableDeclarationList(
   [factory.createVariableDeclaration(
